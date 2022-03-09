@@ -359,6 +359,18 @@ public:
     for(int j=0; j<nb_elt; j++){
       array<nb_edge_loc,Elt1D> edge_loc = EdgesOf(mesh[j]);
       for(int k=0; k<nb_edge_loc; k++){
+        if (&(edge_loc[k][0])-&(edge_loc[k][1])>0)
+          orientation[j][k]=-1.;
+        else
+          orientation[j][k]=1.;
+        //cout << j << " " << k << " " << orientation[j][k] << endl;
+      }
+    }
+
+    /*
+    for(int j=0; j<nb_elt; j++){
+      array<nb_edge_loc,Elt1D> edge_loc = EdgesOf(mesh[j]);
+      for(int k=0; k<nb_edge_loc; k++){
 	bool exists=false;
 	Elt1D e = edge_loc[k]; Order(e);
 	for(int p=begin[Key(e)]; p!=end; p=next[p]){
@@ -377,6 +389,7 @@ public:
 	}
       }
     }
+    */
 
     for(int j=0; j<nb_elt; j++){
       const Elt2D& e = mesh[j];

@@ -453,6 +453,10 @@ private:
 public:
   Dof<ShapeFct>(): mesh_p(0), node_p(0), offset(0) {};
 
+  Dof<ShapeFct>(const Mesh1D& m): mesh_p(0), node_p(0), nb_elt(0), offset(0) {
+    cerr << "BemTool ERROR: cannot use RT0_2D on 1D mesh" << endl;
+  }
+
   Dof<ShapeFct>(const Trait::mesh_t& m):
   mesh_p(&m), node_p(&GeometryOf(m)), nb_elt(NbElt(m)), offset(0) {
 
