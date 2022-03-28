@@ -458,24 +458,34 @@ public:
       volume[j] = Vol(mesh[j]);
       array<nb_edge_loc,Elt1D> edge_loc = EdgesOf(mesh[j]);
       for(int k=0; k<nb_edge_loc; k++){
-	bool exists=false;
-	Elt1D e = edge_loc[k]; Order(e);
-	for(int p=begin[Key(e)]; p!=end; p=next[p]){
-	  if(e==edge[p]){
-	    exists=true;
-	    orientation[j][k]=-1.;
-	    break;
-	  }
-	}
-	if(!exists){
-	  next.push_back(begin[Key(e)]);
-	  begin[Key(e)] = nb_edge;
-	  edge.push_back(e);
-	  orientation[j][k] = +1.;
-	  nb_edge++;
-	}
+        if (&(edge_loc[k][0])-&(edge_loc[k][1])>0)
+          orientation[j][k]=-1.;
+        else
+          orientation[j][k]=1.;
       }
     }
+    // for(int j=0; j<nb_elt; j++){
+    //   volume[j] = Vol(mesh[j]);
+    //   array<nb_edge_loc,Elt1D> edge_loc = EdgesOf(mesh[j]);
+    //   for(int k=0; k<nb_edge_loc; k++){
+	  //     bool exists=false;
+	  //     Elt1D e = edge_loc[k]; Order(e);
+	  //     for(int p=begin[Key(e)]; p!=end; p=next[p]){
+	  //       if(e==edge[p]){
+	  //         exists=true;
+	  //         orientation[j][k]=-1.;
+	  //         break;
+	  //       }
+	  //     } 
+	  //     if(!exists){
+	  //       next.push_back(begin[Key(e)]);
+	  //       begin[Key(e)] = nb_edge;
+	  //       edge.push_back(e);
+	  //       orientation[j][k] = +1.;
+	  //       nb_edge++;
+	  //     }
+    //   }
+    // }  
   }
 
   void Assign(const int& j){num_elt = j;}
