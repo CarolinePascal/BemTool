@@ -69,7 +69,14 @@ namespace bemtool {
 	inter(0,k) = pot[0];
 	inter(1,k) = pot[1];
 	inter(2,k) = pot[2];
-      }            
+    /*
+      for(int ii=0; ii<3; ii++){
+        std::cout << "k=" << k << ", pot["<< ii<<"]=" << pot[ii] << std::endl;
+      }
+    */
+      }    
+      //std::cout << "inter=" << inter << std::endl; 
+      //exit(0);     
       return inter;
     }
     
@@ -79,7 +86,13 @@ namespace bemtool {
       r   = norm2(x_y);
       ker = h*exp(iu*kappa*r)/(4*pi*r);
       val = (iu*kappa*r-1)/(kappa2*r*r);
-      pot  = ker*( phiy(ky,ty) + div_phiy(ky,ty)*val*x_y );
+      pot  = ker*( phiy(ky,ty) + div_phiy(ky,ty)*val*x_y);
+
+      //std::cout << "x_y=" << x_y << "r=" << r << endl;
+      //std::cout << "kappa=" << kappa << "kappa2=" << kappa2 << endl;
+      //std::cout << "phiy("<< ky<<","<< ty <<")=" << phiy(ky,ty) << endl;
+      //std::cout << "div_phiy("<< ky<<","<< ty <<")=" << div_phiy(ky,ty) << endl;
+      
       return pot;
     }
     
@@ -145,6 +158,7 @@ namespace bemtool {
       ker = h*exp(iu*kappa*r)/(4*pi*r);
       val = (iu*kappa*r-1)/(r*r);
       pot = ker*val*vprod(x_y,phiy(ky,ty));
+      
       return pot;
     }
     
@@ -152,6 +166,81 @@ namespace bemtool {
 
   typedef PotKernel<MA,DL_POT,3,RT0_2D>  MFIE_RT0;
 
-  
+
+template <> 
+class Potential<EFIE_RT0>{
+
+public:
+
+  static  const int dimy = EFIE_RT0::Trait::dimy;
+  typedef typename EFIE_RT0::Trait          KernelTypeTrait;
+  typedef typename KernelTypeTrait::MeshY     MeshY;
+  typedef typename KernelTypeTrait::Rdy       RdY;
+  typedef typename KernelTypeTrait::EltY      EltY;
+  typedef typename KernelTypeTrait::MatType   MatType;
+  typedef QuadPot<dimy>                       QuadType;
+
+private:
+
+  const MeshY&     meshy;
+  const Geometry&  nodey;
+  EFIE_RT0         ker;
+  QuadType         qr;
+  MatType          mat;
+  C3               val,val2;
+
+public:
+
+  Potential<EFIE_RT0>(const MeshY& my, const Real& k):
+  ker(my,k), meshy(my), nodey(GeometryOf(my)), qr(10) {};
+
+
+  const MatType& operator()(const R3& x, const int& jy){
+    const std::vector<RdY>&  t  = qr.GetPoints();
+    const std::vector<Real>& w  = qr.GetWeights();
+    mat=0; ker.Assign(x,jy);
+    //std::cout << "Potentiel MA :: w.size()=" << w.size() << std::endl;
+    MatType tmp; 
+    for(int j=0; j<w.size(); j++){
+      mat += w[j]*ker(x,t[j]);
+      //tmp = ker(x,t[j]); 
+      //mat += w[j]*ker(x,t[j]);
+      //std::cout << "tmp=" << tmp  << std::endl;
+      //std::cout << "mat=" << mat  << std::endl;
+      //if(j>2){ exit(0);}
+    }
+    //std::cout << "final mat=" << mat  << std::endl;
+    return mat;
+  }
+  const C3& operator()(const R3& x, const N2& Iy){
+    const std::vector<RdY>&  t  = qr.GetPoints();
+    const std::vector<Real>& w  = qr.GetWeights();
+
+    //std::cout << "MA :: const C3& operator()(const R3& x, const N2& Iy) :: w.size()=" << w.size() << std::endl;
+    val=0; ker.Assign(x,Iy[0]);
+    for(int j=0; j<w.size(); j++){
+      val += w[j]*ker(x,t[j],Iy[1]);
+      //std::cout << "===  loop j= " <<  j << std::endl;
+      //std::cout << "t[j] =" << t[j] << std::endl;
+      //std::cout << "Iy   =" << Iy << std::endl;
+      //std::cout << "ker  =" << ker(x,t[j],Iy[1]) << std::endl;
+    }
+
+    return val;
+  }
+
+  const C3& operator()(const R3& x, const std::vector<N2>& vy){
+    //std::cout << "MA :: const C3& operator()(const R3& x, const std::vector<N2>& vy) :: w.size()=" << std::endl;
+    val2=0.;
+    for(int iy=0; iy<vy.size(); iy++){
+      //std::cout << "loop iy=" << iy << " "<< vy[iy] << std::endl;
+      val2 += (*this)(x,vy[iy]);}
+    //exit(0);
+    return val2;
+  }
+
+};
+
+
 }
 #endif

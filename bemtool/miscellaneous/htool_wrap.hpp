@@ -265,6 +265,99 @@ public:
   }
 
 };
+/*
+template <> 
+class Potential<EFIE_RT0>{
+
+public:
+
+  static  const int dimy = EFIE_RT0::Trait::dimy;
+  typedef typename EFIE_RT0::Trait          KernelTypeTrait;
+  typedef typename KernelTypeTrait::MeshY     MeshY;
+  typedef typename KernelTypeTrait::Rdy       RdY;
+  typedef typename KernelTypeTrait::EltY      EltY;
+  typedef typename KernelTypeTrait::MatType   MatType;
+  typedef QuadPot<dimy>                       QuadType;
+
+private:
+
+  const MeshY&     meshy;
+  const Geometry&  nodey;
+  EFIE_RT0         ker;
+  QuadType         qr;
+  MatType          mat;
+  C3               val,val2;
+
+public:
+
+  Potential<EFIE_RT0>(const MeshY& my, const Real& k):
+  ker(my,k), meshy(my), nodey(GeometryOf(my)), qr(10) {};
+
+
+  const MatType& operator()(const R3& x, const int& jy){
+    const std::vector<RdY>&  t  = qr.GetPoints();
+    const std::vector<Real>& w  = qr.GetWeights();
+    mat=0; ker.Assign(x,jy);
+    std::cout << "Potentiel MA :: w.size()=" << w.size() << endl;
+    MatType tmp; 
+    for(int j=0; j<w.size(); j++){
+      //mat += w[j]*ker(x,t[j]);
+      tmp = ker(x,t[j]); 
+      mat += ker(x,t[j]);
+      std::cout << "mat=" << mat << ",tmp=" << tmp  << endl;
+      if(j>2){ exit(0);}
+    }
+
+    return mat;
+  }
+
+
+  const C3& operator()(const R3& x, const N2& Iy){
+    const std::vector<RdY>&  t  = qr.GetPoints();
+    const std::vector<Real>& w  = qr.GetWeights();
+
+    std::cout << "MA :: const C3& operator()(const R3& x, const N2& Iy) :: w.size()=" << w.size() << endl;
+    val=0; ker.Assign(x,Iy[0]);
+    for(int j=0; j<w.size(); j++){
+      val += w[j]*ker(x,t[j],Iy[1]);}
+    return val;
+  }
+
+  const C3& operator()(const R3& x, const std::vector<N2>& vy){
+    std::cout << "MA :: const C3& operator()(const R3& x, const std::vector<N2>& vy) :: w.size()=" << endl;
+    val2=0.;
+    for(int iy=0; iy<vy.size(); iy++){
+      val2 += (*this)(x,vy[iy]);}
+    return val2;
+  }
+
+};
+*/
+template <>
+class POT_Generator<EFIE_RT0,RT0_2D> : public htool::VirtualGenerator<Cplx>{
+  Potential<EFIE_RT0> V;
+  Dof<RT0_2D> dof;
+  Geometry& geometry;
+  const int composant;
+
+public:
+  POT_Generator(Dof<RT0_2D>& dof0, Geometry& geometry0, double kappa,const int composant0):VirtualGenerator(NbNode(geometry0),NbDof(dof0)), dof(dof0), geometry(geometry0), V(MeshOf(dof0),kappa), composant(composant0) {}
+
+  void copy_submatrix(int M, int N, const int *const rows, const int *const cols, Cplx *ptr) const {
+    Potential<EFIE_RT0> V_local = V;
+    for (int i=0; i<M; i++)
+        for (int j=0; j<N; j++)
+        {
+         
+            ptr[i+j*M] = V_local(geometry[rows[i]],dof.ToElt(cols[j]))[composant];
+
+        }
+    }
+
+};
+
+
+
 
 template<int K>
 class POT_Generator<BIOpKernel<K,HS_OP,2,P0_1D,P0_1D>,P0_1D> : public htool::VirtualGenerator<Cplx>{

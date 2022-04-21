@@ -92,6 +92,72 @@ public:
   }
 
 };
+/*
+template <> 
+class Potential<EFIE_RT0>{
+
+public:
+
+  static  const int dimy = EFIE_RT0::Trait::dimy;
+  typedef typename EFIE_RT0::Trait          KernelTypeTrait;
+  typedef typename KernelTypeTrait::MeshY     MeshY;
+  typedef typename KernelTypeTrait::Rdy       RdY;
+  typedef typename KernelTypeTrait::EltY      EltY;
+  typedef typename KernelTypeTrait::MatType   MatType;
+  typedef QuadPot<dimy>                       QuadType;
+
+private:
+
+  const MeshY&     meshy;
+  const Geometry&  nodey;
+  EFIE_RT0         ker;
+  QuadType         qr;
+  MatType          mat;
+  C3               val,val2;
+
+public:
+
+  Potential<EFIE_RT0>(const MeshY& my, const Real& k):
+  ker(my,k), meshy(my), nodey(GeometryOf(my)), qr(10) {};
+
+
+  const MatType& operator()(const R3& x, const int& jy){
+    const std::vector<RdY>&  t  = qr.GetPoints();
+    const std::vector<Real>& w  = qr.GetWeights();
+    mat=0; ker.Assign(x,jy);
+    std::cout << "Potentiel MA :: w.size()=" << w.size() << endl;
+    MatType tmp; 
+    for(int j=0; j<w.size(); j++){
+      //mat += w[j]*ker(x,t[j]);
+      tmp = ker(x,t[j]); 
+      mat += ker(x,t[j]);
+      std::cout << "mat=" << mat << ",tmp=" << tmp  << endl;
+      if(j>2){ exit(0);}
+    }
+
+    return mat;
+  }
+  const C3& operator()(const R3& x, const N2& Iy){
+    const std::vector<RdY>&  t  = qr.GetPoints();
+    const std::vector<Real>& w  = qr.GetWeights();
+
+    std::cout << "MA :: const C3& operator()(const R3& x, const N2& Iy) :: w.size()=" << w.size() << endl;
+    val=0; ker.Assign(x,Iy[0]);
+    for(int j=0; j<w.size(); j++){
+      val += w[j]*ker(x,t[j],Iy[1]);}
+    return val;
+  }
+
+  const C3& operator()(const R3& x, const std::vector<N2>& vy){
+    std::cout << "MA :: const C3& operator()(const R3& x, const std::vector<N2>& vy) :: w.size()=" << endl;
+    val2=0.;
+    for(int iy=0; iy<vy.size(); iy++){
+      val2 += (*this)(x,vy[iy]);}
+    return val2;
+  }
+
+};
+*/
 
 
 /*==============================
