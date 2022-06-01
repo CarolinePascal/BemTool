@@ -272,8 +272,7 @@ class POT_Generator<EFIE_RT0,RT0_2D> : public htool::VirtualGenerator<Cplx>{
   Dof<RT0_2D> dof;
   Potential<EFIE_RT0> V;
   Geometry& geometry;
-  const int composant;
-
+  
 public:
 
   POT_Generator(Dof<RT0_2D>& dof0, Geometry& geometry0, double kappa):VirtualGenerator(3*NbNode(geometry0),NbDof(dof0)), dof(dof0), geometry(geometry0), V(MeshOf(dof0),kappa) {}
