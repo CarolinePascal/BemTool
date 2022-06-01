@@ -276,7 +276,7 @@ class POT_Generator<EFIE_RT0,RT0_2D> : public htool::VirtualGenerator<Cplx>{
 
 public:
 
-  POT_Generator(Dof<RT0_2D>& dof0, Geometry& geometry0, double kappa,const int composant0):VirtualGenerator(3*NbNode(geometry0),NbDof(dof0)), dof(dof0), geometry(geometry0), V(MeshOf(dof0),kappa), composant(composant0) {}
+  POT_Generator(Dof<RT0_2D>& dof0, Geometry& geometry0, double kappa):VirtualGenerator(3*NbNode(geometry0),NbDof(dof0)), dof(dof0), geometry(geometry0), V(MeshOf(dof0),kappa) {}
 
   void copy_submatrix(int M, int N, const int *const rows, const int *const cols, Cplx *ptr) const {
     Potential<EFIE_RT0> V_local = V;
