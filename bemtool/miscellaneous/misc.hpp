@@ -123,7 +123,7 @@ inline std::vector<std::string> split(const std::string &s, char delim) {
 
 ////========================================================////
 /////////////////////===== Timing ======////////////////////////
-
+/*
 std::stack<clock_t> tictoc_stack;
 
 void tic() {
@@ -142,7 +142,7 @@ void toc(std::vector<double>& times) {
 	times.push_back(time);
 	tictoc_stack.pop();
 }
-
+*/
 
 
 
