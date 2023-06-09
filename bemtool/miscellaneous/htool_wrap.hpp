@@ -103,17 +103,15 @@ public:
   void copy_submatrix(int M, int N, const int *const rows, const int *const cols, Cplx *ptr) const {
     SubBIOp<BIOp<KernelType1>> sub1_local = sub1;
     SubBIOp<BIOp<KernelType2>> sub2_local = sub2;
-    sub1_local.compute_block(M,N,rows,cols,ptr);
-    std::transform(ptr, ptr+M*N, ptr,
-               std::bind(std::multiplies<Cplx>(), std::placeholders::_1, combined_coef_1));
+
+    sub2_local.compute_block_w_mass(M,N,rows,cols,ptr,mass_coef,combined_coef_2);
+
     std::vector<Cplx> tmp(M*N,0);
-    sub2_local.compute_block_w_mass(M,N,rows,cols,tmp.data(),mass_coef);
+    sub1_local.compute_block(M,N,rows,cols,tmp.data());
+
     int size = M*N;
     int incx(1), incy(1);
-    htool::Blas<Cplx>::axpy(&size, &combined_coef_2, tmp.data(),&incx,ptr,&incy);
-
-
-
+    htool::Blas<Cplx>::axpy(&size, &combined_coef_1, tmp.data(),&incx,ptr,&incy);
 }
 
 };
