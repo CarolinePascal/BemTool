@@ -23,7 +23,7 @@ public:
   void copy_submatrix(int M, int N, const int *const rows, const int *const cols, Cplx *ptr) const {
     SubBIOp<BIOp<KernelType>> subV_local = subV;
     subV_local.compute_block(M,N,rows,cols,ptr);
-    if( !( multiply_coeff == 1.0+1i*0.0) ){
+    if( !( multiply_coeff == {1.0,0.0}) ){
       // case bemtool kernel multiplied by a coefficient
       std::transform(ptr, ptr+M*N, ptr,
                std::bind(std::multiplies<Cplx>(), std::placeholders::_1, multiply_coeff));
@@ -61,7 +61,7 @@ public:
 
   void copy_submatrix(int M, int N, const int *const rows, const int *const cols, Cplx *ptr) const {
     SubBIOp<BIOp<KernelType>> subV_local = subV;
-    if( !( alpha == 1.0+1i*0.0) ){
+    if( !( alpha == {1.0,0.0}) ){
       subV_local.compute_block_w_mass(M,N,rows,cols,ptr,coef,alpha);
     }
     else{
