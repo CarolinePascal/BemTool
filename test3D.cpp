@@ -1,8 +1,10 @@
 #include <iostream>
 #include <vector>
 #include <map>
-#include <tools.hpp>
 #include <fstream>
+
+#include "bemtool/tools.hpp"
+#include "bemtool/miscellaneous/eigen_wrap.hpp"
 
 using namespace bemtool;
 
@@ -52,7 +54,7 @@ struct Test{
       }
     }
 
-    Cplx refsol = RefSol<OperatorType>::Compute(n,1.,kappa);
+    Cplx refsol = RefEigenvalue<OperatorType>::Compute(n,1.,kappa);
     std::cout << "Erreur relative:\t";
     std::cout << 100*abs(sum - refsol)/abs(refsol) << " %" << std::endl;
   }

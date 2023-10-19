@@ -1,15 +1,7 @@
-GCC  = g++ -O3
-INCLUDE = -I/usr/include/eigen3/ -I./bemtool/
+GCC  = mpic++ -O3
+INCLUDE = -I/usr/include/eigen3/ -I./ -I${HOME}/FreeFem-install/ff-petsc/c/include/
 
-all: testMax clean
-
-######################################################
-
-test: test.o
-	$(GCC) test.o -o test
-
-test.o: test.cpp
-	$(GCC) $(INCLUDE) -c test.cpp -o test.o
+all: test2D test3D clean
 
 ######################################################
 
@@ -28,24 +20,6 @@ test3D.o: test3D.cpp
 	$(GCC) $(INCLUDE) -c test3D.cpp -o test3D.o
 
 ######################################################
-
-l_beti: l_beti.o
-	$(GCC) l_beti.o -o l_beti
-
-l_beti.o: l_beti.cpp
-	$(GCC) $(INCLUDE) -c l_beti.cpp -o l_beti.o
-
-######################################################
-
-testMax: testMax.o
-	$(GCC) testMax.o -o testMax
-
-testMax.o: testMax.cpp
-	$(GCC) $(INCLUDE) -c testMax.cpp -o testMax.o
-
-######################################################
-
-
 
 clean:
 	rm *.o

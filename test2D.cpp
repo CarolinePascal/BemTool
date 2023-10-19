@@ -2,11 +2,11 @@
 #include <vector>
 #include <map>
 #include <fstream>
-#include <iostream>
-#include <vector>
-#include <map>
+
 #include "bemtool/tools.hpp"
-#include <fstream>
+#include "bemtool/miscellaneous/eigen_wrap.hpp"
+
+#include "bemtool/miscellaneous/htool_wrap.hpp"
 
 using namespace bemtool;
 
